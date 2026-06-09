@@ -32,10 +32,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  const [activeRole, setActiveRole] = useState("All");
   const [selectedMember, setSelectedMember] = useState<typeof members[number] | null>(null);
-  const roles = ["All", ...new Set(members.map((m) => m.role))];
-  const filtered = activeRole === "All" ? members : members.filter((m) => m.role === activeRole);
 
   return (
     <div>
@@ -81,27 +78,10 @@ function AboutPage() {
             </p>
           </div>
 
-          <div className="mb-6 flex flex-wrap gap-2 animate-fade-in-up" style={{ animationDelay: "75ms" }}>
-            {roles.map((role) => (
-              <button
-                key={role}
-                onClick={() => setActiveRole(role)}
-                className={`kts-chip cursor-pointer transition-all duration-200 ${
-                  activeRole === role
-                    ? "border-primary/60 bg-primary/20 text-foreground"
-                    : "hover:border-primary/30 hover:text-foreground/80"
-                }`}
-              >
-                {role}
-              </button>
-            ))}
-          </div>
-
           <div className="overflow-hidden mask-scroll animate-fade-in-up" style={{ animationDelay: "150ms" }}>
             <div className="flex gap-5 animate-scroll hover:pause">
-              {[...filtered, ...filtered].length > 0 ? (
-                [...filtered, ...filtered].map((member, index) => (
-                  <article key={`${member.name}-${index}`} className="kts-member-card w-72 shrink-0 cursor-pointer" onClick={() => setSelectedMember(member)}>
+              {[...members, ...members].map((member, index) => (
+                <article key={`${member.name}-${index}`} className="kts-member-card w-72 shrink-0 cursor-pointer" onClick={() => setSelectedMember(member)}>
                     <img
                       src={member.image}
                       alt={`${member.name} member poster`}
@@ -111,13 +91,8 @@ function AboutPage() {
                     <div className="relative z-10 p-5">
                       <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
                     </div>
-                  </article>
-                ))
-              ) : (
-                <div className="flex h-48 w-full items-center justify-center text-muted-foreground">
-                  No members with that role yet.
-                </div>
-              )}
+                </article>
+              ))}
             </div>
           </div>
         </div>
