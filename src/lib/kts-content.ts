@@ -9,6 +9,7 @@ import rxtchettUrl from "@/assets/ktsRxtchett.png";
 import fxtureUrl from "@/assets/ktsFXTURE.png";
 import splurrUrl from "@/assets/ktsSplurr.webp";
 import sunUrl from "@/assets/ktsSun.png";
+import bobaUrl from "@/assets/ktsBOBA.png";
 
 export const discordUrl = "https://discord.gg/wsf77h7Fmn";
 
@@ -28,47 +29,59 @@ export const navigationItems = [
 
 export const members = [
   {
-    name: "Delay",
+    name: "KTS Delay",
     role: "Delayed",
     tagline: "Bro is Delayed",
     image: delayUrl,
   },
   {
-    name: "Maddy",
+    name: "KTS Maddy",
     role: "Champion energy",
     tagline: "Bright confidence with headline impact.",
     image: maddyUrl,
   },
   {
-    name: "Ramboo",
+    name: "KTS Ramboo",
     role: "Night runner",
     tagline: "Cold atmosphere and late-hour style.",
     image: rambooUrl,
   },
   {
-    name: "Remains",
+    name: "KTS Remains",
     role: "Arena focus",
     tagline: "High-voltage pressure built for the spotlight.",
     image: remainUrl,
   },
   {
-    name: "Rxtchett",
+    name: "KTS Rxtchett",
     role: "Founder / Content Creator",
     tagline: "Built different, Follow Rxcthett!",
     image: rxtchettUrl,
     youtube: "https://www.youtube.com/@Rxtchet1",
   },
   {
-    name: "Splurr",
+    name: "KTS Splurr",
     role: "Splurred",
     tagline: "Dark, aggressive, and impossible to ignore.",
     image: splurrUrl,
   },
   {
-    name: "Sun",
+    name: "KTS Sun",
     role: "Inferno mode",
     tagline: "Pure heat, pure motion, pure impact.",
     image: sunUrl,
+  },
+    {
+    name: "KTS FXTURE",
+    role: "Founder",
+    tagline: "Built different, Follow FXTURE!",
+    image: fxtureUrl,
+  },
+  {
+    name: "KTS BOBA",
+    role: "BOBA energy",
+    tagline: "Smooth and unforgettable.",
+    image: bobaUrl,
   },
 ];
 
@@ -76,13 +89,13 @@ export const featuredMembers = members.slice(0, 3);
 
 export const founders = [
   {
-    name: "Rxtchett",
+    name: "KTS Rxtchett",
     role: "Founder / Content Creator",
     tagline: "Built different, Follow Rxcthett!",
     image: rxtchettUrl,
   },
   {
-    name: "FXTURE / K3",
+    name: "KTS FXTURE",
     role: "Founder",
     tagline: "Built different, Follow FXTURE!",
     image: fxtureUrl,
