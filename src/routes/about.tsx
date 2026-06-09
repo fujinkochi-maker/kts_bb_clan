@@ -48,7 +48,7 @@ function AboutPage() {
         />
         <CrackOverlay />
         <div className="kts-container relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div className="animate-fade-in-up" style={{ animationDelay: "0ms" }}>
+          <div className="animate-fade-in-up pl-6 sm:pl-10 lg:pl-16" style={{ animationDelay: "0ms" }}>
             <p className="kts-eyebrow">About Us</p>
             <h1 className="kts-display text-4xl sm:text-5xl lg:text-6xl">Learn About KTS</h1>
             <div className="mt-6 space-y-4">

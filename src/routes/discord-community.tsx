@@ -47,7 +47,7 @@ function DiscordCommunityPage() {
           <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
         </div>
         <div className="kts-container relative grid gap-10 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-24">
-          <div className="animate-fade-in-up" style={{ animationDelay: "0ms" }}>
+          <div className="animate-fade-in-up pl-6 sm:pl-10 lg:pl-16" style={{ animationDelay: "0ms" }}>
             <p className="kts-eyebrow">Discord Community</p>
             <h1 className="kts-display text-5xl sm:text-6xl lg:text-7xl">Get inside the KTS server.</h1>
             <p className="kts-copy mt-6 max-w-2xl text-lg sm:text-xl">

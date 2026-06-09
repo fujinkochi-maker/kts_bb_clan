@@ -227,6 +227,18 @@ html {
   padding-inline: 1rem;
 }
 
+@media (min-width: 640px) {
+  .kts-container {
+    padding-inline: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .kts-container {
+    padding-inline: 3rem;
+  }
+}
+
 @utility kts-section {
   position: relative;
   padding-block: 4.5rem;
