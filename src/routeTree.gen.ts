@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as KtsContentRouteImport } from './routes/kts-content'
 import { Route as DiscordCommunityRouteImport } from './routes/discord-community'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const KtsContentRoute = KtsContentRouteImport.update({
+  id: '/kts-content',
+  path: '/kts-content',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiscordCommunityRoute = DiscordCommunityRouteImport.update({
   id: '/discord-community',
   path: '/discord-community',
@@ -33,34 +39,45 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/discord-community': typeof DiscordCommunityRoute
+  '/kts-content': typeof KtsContentRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/discord-community': typeof DiscordCommunityRoute
+  '/kts-content': typeof KtsContentRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/discord-community': typeof DiscordCommunityRoute
+  '/kts-content': typeof KtsContentRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/discord-community'
+  fullPaths: '/' | '/about' | '/discord-community' | '/kts-content'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/discord-community'
-  id: '__root__' | '/' | '/about' | '/discord-community'
+  to: '/' | '/about' | '/discord-community' | '/kts-content'
+  id: '__root__' | '/' | '/about' | '/discord-community' | '/kts-content'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   DiscordCommunityRoute: typeof DiscordCommunityRoute
+  KtsContentRoute: typeof KtsContentRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/kts-content': {
+      id: '/kts-content'
+      path: '/kts-content'
+      fullPath: '/kts-content'
+      preLoaderRoute: typeof KtsContentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/discord-community': {
       id: '/discord-community'
       path: '/discord-community'
@@ -89,6 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   DiscordCommunityRoute: DiscordCommunityRoute,
+  KtsContentRoute: KtsContentRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
