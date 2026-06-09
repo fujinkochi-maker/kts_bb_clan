@@ -611,3 +611,14 @@ html {
 .animate-page-enter {
   animation: page-enter 0.35s ease both;
 }
+
+@keyframes crack-draw {
+  from {
+    stroke-dashoffset: 200;
+    opacity: 0;
+  }
+  to {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}

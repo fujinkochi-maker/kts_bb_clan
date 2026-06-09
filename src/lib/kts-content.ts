@@ -27,8 +27,8 @@ export const navigationItems = [
 export const members = [
   {
     name: "Delay",
-    role: "Shadow pressure",
-    tagline: "Monochrome calm. Heavy presence.",
+    role: "Delayed",
+    tagline: "Bro is Delayed",
     image: delayUrl,
   },
   {
@@ -51,13 +51,13 @@ export const members = [
   },
   {
     name: "Rxtchett",
-    role: "Founder lane",
-    tagline: "Built different, self made, king of the ring.",
+    role: "Founder / Content Creator",
+    tagline: "Built different, Follow Rxcthett!",
     image: rxtchettUrl,
   },
   {
     name: "Splurr",
-    role: "Chaos signal",
+    role: "Splurred",
     tagline: "Dark, aggressive, and impossible to ignore.",
     image: splurrUrl,
   },
@@ -74,8 +74,8 @@ export const featuredMembers = members.slice(0, 3);
 export const founders = [
   {
     name: "Rxtchett",
-    role: "Founder",
-    tagline: "Built different, self made, king of the ring.",
+    role: "Founder / Content Creator",
+    tagline: "Built different, Follow Rxcthett!",
     image: rxtchettUrl,
   },
   {

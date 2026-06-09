@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, MessageSquareMore, Shield, Sparkles, Users } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { CrackOverlay } from "@/components/crack-overlay";
 import { DiscordMemberCount } from "@/components/discord-member-count";
 
 import { discordUrl, visuals } from "@/lib/kts-content";
@@ -41,6 +42,7 @@ function DiscordCommunityPage() {
           style={{ backgroundImage: `url(${visuals.gym})` }}
         />
         <div aria-hidden="true" className="kts-hero-overlay" />
+        <CrackOverlay />
         <div aria-hidden="true" className="kts-particles">
           <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
         </div>

@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CrackOverlay } from "@/components/crack-overlay";
 import { MemberDetail } from "@/components/member-detail";
-import { aboutPlaceholder, discordUrl, founders, members, visuals } from "@/lib/kts-content";
+import { discordUrl, founders, members, visuals } from "@/lib/kts-content";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -39,17 +40,21 @@ function AboutPage() {
   return (
     <div>
       <MemberDetail member={selectedMember} open={!!selectedMember} onOpenChange={(o) => { if (!o) setSelectedMember(null); }} />
-      <section className="kts-section border-b border-line/70">
+      <section className="kts-section overflow-hidden border-b border-line/70">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-cover bg-center bg-fixed opacity-20"
+          style={{ backgroundImage: `url(${visuals.banner})` }}
+        />
+        <CrackOverlay />
         <div className="kts-container relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
           <div className="animate-fade-in-up" style={{ animationDelay: "0ms" }}>
             <p className="kts-eyebrow">About Us</p>
-            <h1 className="kts-display text-4xl sm:text-5xl lg:text-6xl">Identity first. Roster forward.</h1>
+            <h1 className="kts-display text-4xl sm:text-5xl lg:text-6xl">Learn About KTS</h1>
             <div className="mt-6 space-y-4">
-              {aboutPlaceholder.map((line) => (
-                <p key={line} className="kts-copy text-lg">
-                  {line}
-                </p>
-              ))}
+              <p className="kts-copy text-lg">
+                KTS is a clan in Boxing Beta focusing on movement, community, and competitiveness in players while learning from each other.
+              </p>
             </div>
             <div className="mt-7 flex flex-wrap gap-3">
               <Button asChild className="kts-button-primary">
@@ -69,7 +74,7 @@ function AboutPage() {
         <div className="kts-container">
           <div className="mb-8 max-w-2xl animate-fade-in-up" style={{ animationDelay: "0ms" }}>
             <p className="kts-eyebrow">Roster</p>
-            <h2 className="kts-display text-3xl sm:text-4xl">All uploaded members, one visual lane.</h2>
+            <h2 className="kts-display text-3xl sm:text-4xl">KTS Members</h2>
             <p className="kts-copy mt-5">
               Each card carries its own mood, but the full lineup still lands under one KTS signal:
               dark, polished, animated, and built to stand out.
@@ -105,7 +110,6 @@ function AboutPage() {
                     />
                     <div className="relative z-10 p-5">
                       <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
-                      <p className="mt-2 text-base text-muted-foreground">{member.tagline}</p>
                     </div>
                   </article>
                 ))
@@ -161,11 +165,10 @@ function AboutPage() {
             <img src={visuals.gym} alt="KTS gym environment exterior" className="h-full w-full object-cover" loading="lazy" />
           </div>
           <div className="animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            <p className="kts-eyebrow">Scene setting</p>
-            <h2 className="kts-display text-3xl sm:text-4xl">From visuals to community.</h2>
+            <p className="kts-eyebrow">KTS Boxing Beta Gym</p>
+            <h2 className="kts-display text-3xl sm:text-4xl">Where we train and gather experiences.</h2>
             <p className="kts-copy mt-5">
-              The member artwork gives KTS its signature range, while the shared black-and-purple system keeps
-              the full brand feeling locked in and cohesive.
+              A place built for competition, growth, and community — where every session sharpens the signal.
             </p>
           </div>
         </div>

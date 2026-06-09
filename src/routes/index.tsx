@@ -4,6 +4,7 @@ import { ArrowRight, Crown } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { CrackOverlay } from "@/components/crack-overlay";
 import { MemberDetail } from "@/components/member-detail";
 import { communityPillars, discordUrl, featuredMembers, founders, members, siteName, visuals } from "@/lib/kts-content";
 
@@ -45,6 +46,7 @@ function HomePage() {
           style={{ backgroundImage: `url(${visuals.banner})` }}
         />
         <div aria-hidden="true" className="kts-hero-overlay" />
+        <CrackOverlay className="text-primary/20" />
         <div aria-hidden="true" className="kts-particles">
           <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
         </div>
