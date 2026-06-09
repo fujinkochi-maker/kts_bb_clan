@@ -13,18 +13,18 @@ export const Route = createFileRoute("/")({
       { title: "KTS Clan - Home" },
       {
         name: "description",
-        content: "KTS Clan is a black-and-purple esports community built around standout members, competitive energy, and Discord-driven connection.",
+        content: "Step into the KTS world with member showcases and direct access to the Discord community.",
       },
       { property: "og:title", content: "KTS Clan - Home" },
       {
         property: "og:description",
-        content: "Step into the KTS world with a cinematic homepage, member showcases, and direct access to the Discord community.",
+        content: "Step into the KTS world with member showcases and direct access to the Discord community.",
       },
       { property: "og:image", content: visuals.banner },
       { name: "twitter:title", content: "KTS Clan - Home" },
       {
         name: "twitter:description",
-        content: "A cinematic esports-style home for KTS members and community.",
+        content: "Step into the KTS world with member showcases and direct access to the Discord community.",
       },
       { name: "twitter:image", content: visuals.banner },
     ],
@@ -122,7 +122,6 @@ function HomePage() {
                 <article key={`${member.name}-${index}`} className="kts-member-card w-72 shrink-0 cursor-pointer" onClick={() => setSelectedMember(member)}>
                   <img src={member.image} alt={`${member.name} KTS member graphic`} className="kts-image-fill" loading="lazy" />
                   <div className="relative z-10 p-5">
-                    <p className="kts-eyebrow">{member.role}</p>
                     <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
                     <p className="mt-2 text-base text-muted-foreground">{member.tagline}</p>
                   </div>

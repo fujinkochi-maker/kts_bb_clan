@@ -104,7 +104,6 @@ function AboutPage() {
                       loading="lazy"
                     />
                     <div className="relative z-10 p-5">
-                      <p className="kts-eyebrow">{member.role}</p>
                       <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
                       <p className="mt-2 text-base text-muted-foreground">{member.tagline}</p>
                     </div>

@@ -35,7 +35,6 @@ export function MemberDetail({ member, open, onOpenChange }: MemberDetailProps) 
         </div>
         <div className="space-y-3 px-6 pb-6 sm:px-8 sm:pb-8">
           <div>
-            <p className="kts-eyebrow">{member.role}</p>
             <DialogTitle className="font-display text-3xl text-foreground sm:text-4xl">
               {member.name}
             </DialogTitle>
