@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Crown } from "lucide-react";
+import { Crown, Youtube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CrackOverlay } from "@/components/crack-overlay";
 import { MemberDetail } from "@/components/member-detail";
@@ -90,6 +90,12 @@ function AboutPage() {
                     />
                     <div className="relative z-10 p-5">
                       <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
+                      {member.youtube && (
+                        <a href={member.youtube} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 transition-colors" onClick={(e) => e.stopPropagation()}>
+                          <Youtube className="h-4 w-4" />
+                          YouTube
+                        </a>
+                      )}
                     </div>
                 </article>
               ))}

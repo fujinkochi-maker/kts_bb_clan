@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, Crown } from "lucide-react";
+import { ArrowRight, Crown, Youtube } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -121,10 +121,16 @@ function HomePage() {
               {[...members, ...members].map((member, index) => (
                 <article key={`${member.name}-${index}`} className="kts-member-card w-72 shrink-0 cursor-pointer" onClick={() => setSelectedMember(member)}>
                   <img src={member.image} alt={`${member.name} KTS member graphic`} className="kts-image-fill" loading="lazy" />
-                  <div className="relative z-10 p-5">
-                    <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
-                    <p className="mt-2 text-base text-muted-foreground">{member.tagline}</p>
-                  </div>
+                    <div className="relative z-10 p-5">
+                      <h3 className="font-display text-2xl text-foreground">{member.name}</h3>
+                      <p className="mt-2 text-base text-muted-foreground">{member.tagline}</p>
+                      {member.youtube && (
+                        <a href={member.youtube} target="_blank" rel="noreferrer" className="mt-2 inline-flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 transition-colors" onClick={(e) => e.stopPropagation()}>
+                          <Youtube className="h-4 w-4" />
+                          YouTube
+                        </a>
+                      )}
+                    </div>
                 </article>
               ))}
             </div>

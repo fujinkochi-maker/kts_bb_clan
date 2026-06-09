@@ -6,6 +6,7 @@ import maddyUrl from "@/assets/ktsMaddy.webp";
 import rambooUrl from "@/assets/ktsRamboo.png";
 import remainUrl from "@/assets/ktsRemain.png";
 import rxtchettUrl from "@/assets/ktsRxtchett.png";
+import fxtureUrl from "@/assets/ktsFXTURE.png";
 import splurrUrl from "@/assets/ktsSplurr.webp";
 import sunUrl from "@/assets/ktsSun.png";
 
@@ -54,6 +55,7 @@ export const members = [
     role: "Founder / Content Creator",
     tagline: "Built different, Follow Rxcthett!",
     image: rxtchettUrl,
+    youtube: "https://www.youtube.com/@Rxtchet1",
   },
   {
     name: "Splurr",
@@ -79,10 +81,10 @@ export const founders = [
     image: rxtchettUrl,
   },
   {
-    name: "K3",
+    name: "FXTURE / K3",
     role: "Founder",
-    tagline: "",
-    image: undefined,
+    tagline: "Built different, Follow FXTURE!",
+    image: fxtureUrl,
   },
 ];
 

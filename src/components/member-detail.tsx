@@ -1,4 +1,4 @@
-import { Crown } from "lucide-react";
+import { Crown, Youtube } from "lucide-react";
 
 import {
   Dialog,
@@ -14,6 +14,7 @@ interface MemberDetailProps {
     role: string;
     tagline: string;
     image: string;
+    youtube?: string;
   } | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -54,6 +55,12 @@ export function MemberDetail({ member, open, onOpenChange }: MemberDetailProps) 
           <DialogDescription className="text-base text-muted-foreground">
             {member.tagline}
           </DialogDescription>
+          {member.youtube && (
+            <a href={member.youtube} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-sm text-red-400 hover:text-red-300 transition-colors">
+              <Youtube className="h-4 w-4" />
+              YouTube
+            </a>
+          )}
         </div>
       </DialogContent>
     </Dialog>
