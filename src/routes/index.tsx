@@ -49,7 +49,7 @@ function HomePage() {
           <span /><span /><span /><span /><span /><span /><span /><span /><span /><span />
         </div>
         <div className="kts-container relative grid items-center gap-10 py-16 lg:grid-cols-[1fr_1fr] lg:py-24">
-          <div className="animate-fade-in">
+          <div className="animate-fade-in pl-6 sm:pl-10 lg:pl-16">
             <p className="kts-eyebrow">KTS Clan</p>
             <h1 className="kts-display max-w-4xl text-5xl sm:text-6xl lg:text-7xl">
               Built for Legacy Boxing Beta.
@@ -58,16 +58,14 @@ function HomePage() {
               A Boxing Beta clan that is built for competition and community.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild className="kts-button-primary">
-                <a href={discordUrl} target="_blank" rel="noreferrer" onClick={() => toast("Redirecting to Discord...")}>
-                  Join Discord
-                  <ArrowRight />
-                </a>
-              </Button>
-              <Button asChild variant="outline" className="kts-button-secondary">
-                <Link to="/about">Meet the roster</Link>
-              </Button>
+            <div className="mt-8 flex flex-wrap items-center gap-6">
+              <a href={discordUrl} target="_blank" rel="noreferrer" onClick={() => toast("Redirecting to Discord...")} className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground uppercase tracking-wider transition-colors hover:text-foreground">
+                Join Discord
+                <ArrowRight className="h-3.5 w-3.5" />
+              </a>
+              <Link to="/about" className="text-sm font-medium text-muted-foreground uppercase tracking-wider transition-colors hover:text-foreground">
+                Meet the roster
+              </Link>
             </div>
           </div>
 

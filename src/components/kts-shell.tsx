@@ -95,11 +95,9 @@ export function KtsShell({ children }: { children: ReactNode }) {
           </nav>
 
           <div className="hidden md:flex">
-            <Button asChild className="kts-button-primary">
-              <a href={discordUrl} target="_blank" rel="noreferrer">
-                Join Discord
-              </a>
-            </Button>
+            <a href={discordUrl} target="_blank" rel="noreferrer" className="kts-nav-link">
+              Join Discord
+            </a>
           </div>
 
           <button
