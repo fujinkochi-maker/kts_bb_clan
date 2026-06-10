@@ -1,22 +1,26 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { exchangeCode, getUserInfo, checkGuildMembership, signSession, buildAvatarUrl } from "@/lib/api/discord-auth.server";
-import { getRequestUrl } from "@tanstack/react-start/server";
+import { createServerFn } from "@tanstack/react-start";
+
+const getCallbackParams = createServerFn({ method: "GET" }).handler(async () => {
+  const { getRequestUrl } = await import("@tanstack/react-start/server");
+  const url = getRequestUrl();
+  return {
+    code: url.searchParams.get("code"),
+    errorParam: url.searchParams.get("error"),
+    origin: url.origin,
+  };
+});
 
 export const Route = createFileRoute("/auth/discord/callback")({
   loader: async () => {
-    const url = getRequestUrl();
-    const code = url.searchParams.get("code");
-    const errorParam = url.searchParams.get("error");
+    const { code, errorParam, origin } = await getCallbackParams();
 
     if (errorParam || !code) {
       throw redirect({ to: "/join" });
     }
 
     try {
-      const origin =
-        process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}`
-          : `http://localhost:${process.env.PORT ?? 3000}`;
       const redirectUri = `${origin}/auth/discord/callback`;
 
       const token = await exchangeCode(code, redirectUri);
