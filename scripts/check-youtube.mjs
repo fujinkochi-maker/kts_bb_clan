@@ -7,7 +7,11 @@ const ROOT = join(__dirname, "..");
 
 const CHANNEL_ID = "UCgzTqhCy0uMlr4qycLlCRHQ";
 const RSS_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
-const WEBHOOK_URL = "https://discord.com/api/webhooks/1514120432259829922/2Ph6Wrt_JqUeItPYk6ZeSija8pe8I7AmgxSvDORluatZx09mxA2qrR0gR-hMqYrSdZJO";
+const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+if (!WEBHOOK_URL) {
+  console.error("DISCORD_WEBHOOK_URL environment variable is not set.");
+  process.exit(1);
+}
 const STATE_PATH = join(ROOT, "last-notified-video.json");
 
 function readState() {

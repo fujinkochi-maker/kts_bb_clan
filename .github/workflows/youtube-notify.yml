@@ -16,6 +16,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check YouTube feed and send webhook
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: node scripts/check-youtube.mjs
 
       - name: Commit updated state
