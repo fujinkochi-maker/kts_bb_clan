@@ -14,7 +14,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CrackOverlay } from "@/components/crack-overlay";
-import { verifySession } from "@/lib/api/discord-auth.server";
 import { visuals } from "@/lib/kts-content";
 import {
   createServerFn,
@@ -37,39 +36,38 @@ interface LoaderData {
 }
 
 const RANKS = [
-  "Bronze",
+  "Iron",
   "Silver",
   "Gold",
-  "Platinum",
+  "Emerald",
   "Diamond",
-  "Elite",
+  "Platinum",
   "Master",
-  "Grandmaster",
-  "Champion",
-  "Unranked / New",
+  "Void",
 ];
 
-export const Route = createFileRoute("/join")({
-  loader: async ({ request }): Promise<LoaderData> => {
-    const cookieHeader = request.headers.get("cookie") ?? "";
-    const match = cookieHeader.match(/(?:^|;\s*)kts_session=([^;]*)/);
-    const raw = match?.[1];
-    const data = raw ? verifySession(decodeURIComponent(raw)) : null;
+const getSession = createServerFn({ method: "GET" }).handler(async () => {
+  const { getCookie } = await import("@tanstack/react-start/server");
+  const { verifySession } = await import("@/lib/api/discord-auth.server");
+  const raw = getCookie("kts_session");
+  const data = raw ? verifySession(decodeURIComponent(raw)) : null;
+  return data
+    ? {
+        id: data.id as string,
+        username: data.username as string,
+        globalName: data.globalName as string | null,
+        avatar: data.avatar as string,
+        discriminator: data.discriminator as string,
+        inGuild: data.inGuild as boolean,
+        joinedAt: data.joinedAt as string | null,
+      }
+    : null;
+});
 
-    return {
-      user: data
-        ? {
-            id: data.id as string,
-            username: data.username as string,
-            globalName: data.globalName as string | null,
-            avatar: data.avatar as string,
-            discriminator: data.discriminator as string,
-            inGuild: data.inGuild as boolean,
-            joinedAt: data.joinedAt as string | null,
-          }
-        : null,
-      error: undefined,
-    };
+export const Route = createFileRoute("/join")({
+  loader: async (): Promise<LoaderData> => {
+    const user = await getSession();
+    return { user, error: undefined };
   },
   component: JoinPage,
 });
