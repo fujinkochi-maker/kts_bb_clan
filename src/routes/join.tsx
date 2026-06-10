@@ -87,11 +87,11 @@ const submitApplication = createServerFn({ method: "POST" })
     inGuild: boolean;
   }) => d)
   .handler(async ({ data }) => {
-    const { DISCORD_WEBHOOK_URL } = await import(
+    const { webhookUrl2 } = await import(
       "@/lib/config.server"
     ).then((m) => m.getServerConfig().discord);
 
-    if (!DISCORD_WEBHOOK_URL) {
+    if (!webhookUrl2) {
       return { ok: false, error: "Webhook not configured" };
     }
 
@@ -125,7 +125,7 @@ const submitApplication = createServerFn({ method: "POST" })
       );
       form.append("payload_json", JSON.stringify({ embeds: [embed] }));
 
-      const res = await fetch(DISCORD_WEBHOOK_URL, {
+      const res = await fetch(webhookUrl2, {
         method: "POST",
         body: form,
       });
@@ -135,7 +135,7 @@ const submitApplication = createServerFn({ method: "POST" })
         return { ok: false, error: `Discord returned ${res.status}: ${text}` };
       }
     } else {
-      const res = await fetch(DISCORD_WEBHOOK_URL, {
+      const res = await fetch(webhookUrl2, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ embeds: [embed] }),

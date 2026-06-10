@@ -9,6 +9,7 @@ export function getServerConfig() {
       botToken: process.env.DISCORD_BOT_TOKEN ?? "",
       guildId: process.env.DISCORD_GUILD_ID ?? "",
       webhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
+      webhookUrl2: process.env.DISCORD_WEBHOOK_URL2 ?? "",
     },
     sessionSecret: process.env.SESSION_SECRET ?? "kts-session-secret-change-me",
   };
