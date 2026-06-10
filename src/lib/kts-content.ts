@@ -24,6 +24,7 @@ export const navigationItems = [
   { label: "Home", to: "/" as const },
   { label: "About Us", to: "/about" as const },
   { label: "KTS Content", to: "/kts-content" as const },
+  { label: "Join", to: "/join" as const },
   { label: "Discord Community", to: "/discord-community" as const },
 ];
 
