@@ -28,6 +28,7 @@ interface DiscordUser {
   discriminator: string;
   inGuild: boolean;
   joinedAt: string | null;
+  lastSubmittedAt: string | null;
 }
 
 interface LoaderData {
@@ -60,6 +61,7 @@ const getSession = createServerFn({ method: "GET" }).handler(async () => {
         discriminator: data.discriminator as string,
         inGuild: data.inGuild as boolean,
         joinedAt: data.joinedAt as string | null,
+        lastSubmittedAt: (data.lastSubmittedAt as string | undefined) ?? null,
       }
     : null;
 });
@@ -85,6 +87,29 @@ const submitApplication = createServerFn({ method: "POST" })
     inGuild: boolean;
   }) => d)
   .handler(async ({ data }) => {
+    const { getCookie, setCookie } = await import(
+      "@tanstack/react-start/server"
+    );
+    const { verifySession, signSession } = await import(
+      "@/lib/api/discord-auth.server"
+    );
+
+    const raw = getCookie("kts_session");
+    const existingSession = raw ? verifySession(raw) : null;
+
+    if (existingSession?.lastSubmittedAt) {
+      const lastTime = new Date(
+        existingSession.lastSubmittedAt as string,
+      ).getTime();
+      if (Date.now() - lastTime < 86400000) {
+        return {
+          ok: false,
+          error:
+            "You can only submit one application per day. Please try again later.",
+        };
+      }
+    }
+
     const { webhookUrl2 } = await import(
       "@/lib/config.server"
     ).then((m) => m.getServerConfig().discord);
@@ -167,6 +192,17 @@ const submitApplication = createServerFn({ method: "POST" })
       }
     }
 
+    const updatedSession = {
+      ...(existingSession || {}),
+      lastSubmittedAt: new Date().toISOString(),
+    };
+    setCookie("kts_session", signSession(updatedSession), {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 3600,
+    });
+
     return { ok: true, error: null };
   });
 
@@ -183,11 +219,20 @@ function JoinPage() {
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const canSubmit =
+    !user?.lastSubmittedAt ||
+    Date.now() - new Date(user.lastSubmittedAt).getTime() >= 86400000;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user) {
       toast("Please login with Discord first.");
+      return;
+    }
+
+    if (!canSubmit) {
+      toast("You can only submit one application per day.");
       return;
     }
 
@@ -331,89 +376,101 @@ function JoinPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="roblox">Roblox Username</Label>
-                  <Input
-                    id="roblox"
-                    value={robloxUser}
-                    onChange={(e) => setRobloxUser(e.target.value)}
-                    placeholder="xX_KTS_Delay_Xx"
-                    required
-                  />
-                </div>
+              {canSubmit ? (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="roblox">Roblox Username</Label>
+                    <Input
+                      id="roblox"
+                      value={robloxUser}
+                      onChange={(e) => setRobloxUser(e.target.value)}
+                      placeholder="xX_KTS_Delay_Xx"
+                      required
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="rank">Boxing Beta Rank</Label>
-                  <Select value={rank} onValueChange={setRank} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select your rank" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {RANKS.map((r) => (
-                        <SelectItem key={r} value={r}>
-                          {r}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rank">Boxing Beta Rank</Label>
+                    <Select value={rank} onValueChange={setRank} required>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select your rank" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {RANKS.map((r) => (
+                          <SelectItem key={r} value={r}>
+                            {r}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="screenshot">
-                    Rank Screenshot{" "}
-                    <span className="text-muted-foreground">(optional)</span>
-                  </Label>
-                  <Input
-                    ref={fileRef}
-                    id="screenshot"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setScreenshot(e.target.files?.[0] ?? null)}
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Upload a screenshot proving your rank so leadership can verify.
+                  <div className="space-y-2">
+                    <Label htmlFor="screenshot">
+                      Rank Screenshot{" "}
+                      <span className="text-muted-foreground">(optional)</span>
+                    </Label>
+                    <Input
+                      ref={fileRef}
+                      id="screenshot"
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => setScreenshot(e.target.files?.[0] ?? null)}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Upload a screenshot proving your rank so leadership can verify.
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="message">
+                      Why do you want to join KTS?{" "}
+                      <span className="text-muted-foreground">(optional)</span>
+                    </Label>
+                    <Textarea
+                      id="message"
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      placeholder="Tell us about yourself..."
+                      rows={4}
+                    />
+                    <p className="text-xs text-muted-foreground text-right">
+                      {message.length} / 1000
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="referred">
+                      Referred by{" "}
+                      <span className="text-muted-foreground">(optional)</span>
+                    </Label>
+                    <Input
+                      id="referred"
+                      value={referredBy}
+                      onChange={(e) => setReferredBy(e.target.value)}
+                      placeholder="KTS Ramboo"
+                    />
+                  </div>
+
+                  <Button
+                    type="submit"
+                    className="kts-button-primary w-full"
+                    disabled={submitting}
+                  >
+                    {submitting ? "Submitting..." : "Submit Application"}
+                  </Button>
+                </form>
+              ) : (
+                <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-6 text-center">
+                  <p className="text-lg font-medium text-foreground">
+                    Application Already Submitted
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    You can only submit one application per day. Please check back later
+                    to apply again.
                   </p>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="message">
-                    Why do you want to join KTS?{" "}
-                    <span className="text-muted-foreground">(optional)</span>
-                  </Label>
-                  <Textarea
-                    id="message"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Tell us about yourself..."
-                    rows={4}
-                  />
-                  <p className="text-xs text-muted-foreground text-right">
-                    {message.length} / 1000
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="referred">
-                    Referred by{" "}
-                    <span className="text-muted-foreground">(optional)</span>
-                  </Label>
-                  <Input
-                    id="referred"
-                    value={referredBy}
-                    onChange={(e) => setReferredBy(e.target.value)}
-                    placeholder="KTS Ramboo"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  className="kts-button-primary w-full"
-                  disabled={submitting}
-                >
-                  {submitting ? "Submitting..." : "Submit Application"}
-                </Button>
-              </form>
+              )}
             </div>
           </div>
         </div>
