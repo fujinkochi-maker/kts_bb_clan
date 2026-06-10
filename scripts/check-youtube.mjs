@@ -47,31 +47,9 @@ async function fetchLatestVideo() {
 }
 
 async function sendWebhook(video) {
-  const embed = {
-    title: video.title,
-    url: video.href,
-    color: 10070709,
-    timestamp: video.published,
-    author: {
-      name: video.author ?? "KTS Rxtchett",
-      url: "https://www.youtube.com/@Rxtchet1",
-    },
-    thumbnail: {
-      url: `https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`,
-    },
-    fields: [
-      {
-        name: "Watch now",
-        value: `[Click here](${video.href})`,
-        inline: true,
-      },
-    ],
-    footer: {
-      text: "KTS Clan — YouTube Notifier",
-    },
-  };
+  const content = `**${video.author ?? "KTS Rxtchett"} uploaded a new video**\n${video.href}`;
 
-  const payload = { embeds: [embed] };
+  const payload = { content };
 
   const res = await fetch(WEBHOOK_URL, {
     method: "POST",
