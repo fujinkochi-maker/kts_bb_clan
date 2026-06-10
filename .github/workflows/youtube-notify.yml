@@ -12,23 +12,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore last notified video ID
+        id: state
+        run: |
+          ID=$(gh variable get YOUTUBE_LAST_VIDEO_ID 2>/dev/null || echo "null")
+          echo "last_video_id=$ID" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Check YouTube feed and send webhook
+        id: check
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          LAST_VIDEO_ID: ${{ steps.state.outputs.last_video_id }}
         run: node scripts/check-youtube.mjs
 
-      - name: Commit updated state
-        if: success()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add last-notified-video.json
-          if git diff --cached --quiet; then
-            echo "No state change — skipping commit."
-          else
-            git commit -m "chore: update last notified video"
-            git push
-          fi
+      - name: Save last notified video ID
+        if: steps.check.outputs.new_video_id != ''
+        run: gh variable set YOUTUBE_LAST_VIDEO_ID=${{ steps.check.outputs.new_video_id }}
+        env:
+          GH_TOKEN: ${{ github.token }}

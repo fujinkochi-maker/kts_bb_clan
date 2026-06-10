@@ -1,28 +1,12 @@
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { join, dirname } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = join(__dirname, "..");
+import { writeFileSync } from "node:fs";
 
 const CHANNEL_ID = "UCgzTqhCy0uMlr4qycLlCRHQ";
 const RSS_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 if (!WEBHOOK_URL) {
   console.error("DISCORD_WEBHOOK_URL environment variable is not set.");
   process.exit(1);
-}
-const STATE_PATH = join(ROOT, "last-notified-video.json");
-
-function readState() {
-  if (!existsSync(STATE_PATH)) {
-    return { videoId: null, published: null };
-  }
-  return JSON.parse(readFileSync(STATE_PATH, "utf-8"));
-}
-
-function writeState(state) {
-  writeFileSync(STATE_PATH, JSON.stringify(state, null, 2) + "\n");
 }
 
 function parseFeed(xml) {
@@ -81,13 +65,11 @@ async function sendWebhook(video) {
 }
 
 async function main() {
-  const state = readState();
+  const lastVideoId = process.env.LAST_VIDEO_ID || "null";
 
   console.log(`Fetching YouTube RSS feed for channel ${CHANNEL_ID}...`);
   const res = await fetch(RSS_URL);
-  if (!res.ok) {
-    throw new Error(`RSS feed returned ${res.status}`);
-  }
+  if (!res.ok) throw new Error(`RSS feed returned ${res.status}`);
 
   const xml = await res.text();
   const latest = parseFeed(xml);
@@ -99,7 +81,7 @@ async function main() {
 
   console.log(`Latest video: ${latest.title} (${latest.videoId})`);
 
-  if (latest.videoId === state.videoId) {
+  if (latest.videoId === lastVideoId) {
     console.log("No new video — last notified video matches.");
     return;
   }
@@ -107,8 +89,12 @@ async function main() {
   console.log("New video detected! Sending Discord webhook...");
   await sendWebhook(latest);
 
-  writeState({ videoId: latest.videoId, published: latest.published });
-  console.log("State updated. Done.");
+  const outputPath = process.env.GITHUB_OUTPUT;
+  if (outputPath) {
+    writeFileSync(outputPath, `new_video_id=${latest.videoId}\n`, { flag: "a" });
+  }
+
+  console.log(`Done. Notified about: ${latest.videoId}`);
 }
 
 main().catch((err) => {
