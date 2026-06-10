@@ -1,0 +1,32 @@
+name: YouTube Notify — Discord Webhook
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  check-and-notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check YouTube feed and send webhook
+        run: node scripts/check-youtube.mjs
+
+      - name: Commit updated state
+        if: success()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add last-notified-video.json
+          if git diff --cached --quiet; then
+            echo "No state change — skipping commit."
+          else
+            git commit -m "chore: update last notified video"
+            git push
+          fi
