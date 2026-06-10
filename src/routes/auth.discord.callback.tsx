@@ -1,9 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { exchangeCode, getUserInfo, checkGuildMembership, signSession, buildAvatarUrl } from "@/lib/api/discord-auth.server";
+import { getRequestUrl } from "@tanstack/react-start/server";
 
 export const Route = createFileRoute("/auth/discord/callback")({
-  loader: async ({ request }) => {
-    const url = new URL(request.url);
+  loader: async () => {
+    const url = getRequestUrl();
     const code = url.searchParams.get("code");
     const errorParam = url.searchParams.get("error");
 
