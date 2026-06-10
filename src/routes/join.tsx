@@ -216,6 +216,7 @@ function JoinPage() {
   const [message, setMessage] = useState("");
   const [referredBy, setReferredBy] = useState("");
   const [screenshot, setScreenshot] = useState<File | null>(null);
+  const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -280,12 +281,7 @@ function JoinPage() {
 
       if (result.ok) {
         toast("Application submitted! We'll reach out on Discord.");
-        setRobloxUser("");
-        setRank("");
-        setMessage("");
-        setReferredBy("");
-        setScreenshot(null);
-        if (fileRef.current) fileRef.current.value = "";
+        setSubmitted(true);
       } else {
         toast(result.error || "Something went wrong.");
       }
@@ -376,7 +372,17 @@ function JoinPage() {
                 </div>
               </div>
 
-              {canSubmit ? (
+              {submitted ? (
+                <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-6 text-center">
+                  <p className="text-lg font-medium text-foreground">
+                    Application Submitted!
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Thank you for applying to KTS. We'll reach out on Discord. You can
+                    submit again tomorrow.
+                  </p>
+                </div>
+              ) : canSubmit ? (
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="space-y-2">
                     <Label htmlFor="roblox">Roblox Username</Label>
