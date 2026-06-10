@@ -50,7 +50,7 @@ const getSession = createServerFn({ method: "GET" }).handler(async () => {
   const { getCookie } = await import("@tanstack/react-start/server");
   const { verifySession } = await import("@/lib/api/discord-auth.server");
   const raw = getCookie("kts_session");
-  const data = raw ? verifySession(decodeURIComponent(raw)) : null;
+  const data = raw ? verifySession(raw) : null;
   return data
     ? {
         id: data.id as string,

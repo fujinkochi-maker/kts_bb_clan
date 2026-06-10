@@ -8,7 +8,6 @@ export function getOAuthUrl(redirectUri: string) {
     redirect_uri: redirectUri,
     response_type: "code",
     scope: "identify guilds.members.read",
-    prompt: "consent",
   });
   return `https://discord.com/api/oauth2/authorize?${params}`;
 }

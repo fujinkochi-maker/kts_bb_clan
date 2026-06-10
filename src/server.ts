@@ -3,6 +3,13 @@ import "./lib/error-capture";
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 import { handleDiscordInteraction } from "./lib/api/discord-interactions.server";
+import {
+  exchangeCode,
+  getUserInfo,
+  checkGuildMembership,
+  signSession,
+  buildAvatarUrl,
+} from "./lib/api/discord-auth.server";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -17,6 +24,54 @@ async function getServerEntry(): Promise<ServerEntry> {
     );
   }
   return serverEntryPromise;
+}
+
+async function handleDiscordCallback(request: Request): Promise<Response | null> {
+  const url = new URL(request.url);
+  if (url.pathname !== "/auth/discord/callback") return null;
+
+  const code = url.searchParams.get("code");
+  const errorParam = url.searchParams.get("error");
+
+  if (errorParam || !code) {
+    return new Response(null, {
+      status: 302,
+      headers: { Location: new URL("/join", url.origin).toString() },
+    });
+  }
+
+  try {
+    const redirectUri = `${url.origin}/auth/discord/callback`;
+    const token = await exchangeCode(code, redirectUri);
+    const user = await getUserInfo(token.access_token);
+    const joinedAt = await checkGuildMembership(user.id);
+
+    const session = {
+      id: user.id,
+      username: user.username,
+      globalName: user.global_name,
+      avatar: buildAvatarUrl(user.id, user.avatar),
+      discriminator: user.discriminator,
+      inGuild: joinedAt !== null,
+      joinedAt,
+    };
+
+    const cookie = signSession(session);
+
+    return new Response(null, {
+      status: 302,
+      headers: {
+        Location: new URL("/join", url.origin).toString(),
+        "Set-Cookie": `kts_session=${cookie}; Path=/; HttpOnly; SameSite=Lax; Max-Age=3600`,
+      },
+    });
+  } catch (err) {
+    console.error("Discord auth callback error:", err);
+    return new Response(null, {
+      status: 302,
+      headers: { Location: new URL("/join", url.origin).toString() },
+    });
+  }
 }
 
 async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
@@ -41,6 +96,9 @@ export default {
     try {
       const interaction = await handleDiscordInteraction(request);
       if (interaction) return interaction;
+
+      const callback = await handleDiscordCallback(request);
+      if (callback) return callback;
 
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
