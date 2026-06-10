@@ -27,6 +27,7 @@ jobs:
         id: check
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           LAST_VIDEO_ID: ${{ steps.state.outputs.last_video_id }}
         run: node scripts/check-youtube.mjs
 

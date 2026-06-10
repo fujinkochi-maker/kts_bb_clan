@@ -1,28 +1,49 @@
 import { writeFileSync } from "node:fs";
 
 const CHANNEL_ID = "UCgzTqhCy0uMlr4qycLlCRHQ";
-const RSS_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
-
+const API_KEY = process.env.YOUTUBE_API_KEY;
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
+
+if (!API_KEY) {
+  console.error("YOUTUBE_API_KEY environment variable is not set.");
+  process.exit(1);
+}
+
 if (!WEBHOOK_URL) {
   console.error("DISCORD_WEBHOOK_URL environment variable is not set.");
   process.exit(1);
 }
 
-function parseFeed(xml) {
-  const entryMatch = xml.match(/<entry>([\s\S]*?)<\/entry>/);
-  if (!entryMatch) return null;
+const API_URL =
+  `https://www.googleapis.com/youtube/v3/search` +
+  `?key=${API_KEY}` +
+  `&channelId=${CHANNEL_ID}` +
+  `&part=snippet` +
+  `&order=date` +
+  `&maxResults=1` +
+  `&type=video`;
 
-  const entry = entryMatch[1];
-  const videoId = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/)?.[1];
-  const title = entry.match(/<title[^>]*>([^<]+)<\/title>/)?.[1];
-  const href = entry.match(/<link[^>]*href="([^"]+)"[^>]*\/?>/)?.[1];
-  const published = entry.match(/<published>([^<]+)<\/published>/)?.[1];
-  const author = entry.match(/<name>([^<]+)<\/name>/)?.[1];
+async function fetchLatestVideo() {
+  const res = await fetch(API_URL);
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`YouTube API returned ${res.status}: ${text}`);
+  }
 
-  if (!videoId) return null;
+  const data = await res.json();
 
-  return { videoId, title, href, published, author };
+  if (!data.items || data.items.length === 0) {
+    return null;
+  }
+
+  const item = data.items[0];
+  return {
+    videoId: item.id.videoId,
+    title: item.snippet.title,
+    href: `https://youtube.com/watch?v=${item.id.videoId}`,
+    published: item.snippet.publishedAt,
+    author: item.snippet.channelTitle,
+  };
 }
 
 async function sendWebhook(video) {
@@ -54,7 +75,7 @@ async function sendWebhook(video) {
 
   const res = await fetch(WEBHOOK_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "User-Agent": USER_AGENT },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
 
@@ -64,34 +85,14 @@ async function sendWebhook(video) {
   }
 }
 
-const USER_AGENT =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36";
-
-async function fetchWithRetry(url, retries = 3, delay = 5000) {
-  for (let i = 0; i < retries; i++) {
-    const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
-    if (res.ok) return res;
-    console.log(`RSS feed returned ${res.status} (attempt ${i + 1}/${retries})`);
-    if (i < retries - 1) {
-      const wait = delay * (i + 1);
-      console.log(`Retrying in ${wait / 1000}s...`);
-      await new Promise((r) => setTimeout(r, wait));
-    }
-  }
-  throw new Error(`RSS feed failed after ${retries} attempts`);
-}
-
 async function main() {
   const lastVideoId = process.env.LAST_VIDEO_ID || "null";
 
-  console.log(`Fetching YouTube RSS feed for channel ${CHANNEL_ID}...`);
-  const res = await fetchWithRetry(RSS_URL);
-
-  const xml = await res.text();
-  const latest = parseFeed(xml);
+  console.log(`Fetching latest video from YouTube Data API...`);
+  const latest = await fetchLatestVideo();
 
   if (!latest) {
-    console.log("No video entries found in feed.");
+    console.log("No videos found for this channel.");
     return;
   }
 
