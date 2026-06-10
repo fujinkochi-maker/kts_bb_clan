@@ -54,7 +54,7 @@ async function sendWebhook(video) {
 
   const res = await fetch(WEBHOOK_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "User-Agent": USER_AGENT },
     body: JSON.stringify(payload),
   });
 
@@ -64,12 +64,28 @@ async function sendWebhook(video) {
   }
 }
 
+const USER_AGENT =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36";
+
+async function fetchWithRetry(url, retries = 3, delay = 5000) {
+  for (let i = 0; i < retries; i++) {
+    const res = await fetch(url, { headers: { "User-Agent": USER_AGENT } });
+    if (res.ok) return res;
+    console.log(`RSS feed returned ${res.status} (attempt ${i + 1}/${retries})`);
+    if (i < retries - 1) {
+      const wait = delay * (i + 1);
+      console.log(`Retrying in ${wait / 1000}s...`);
+      await new Promise((r) => setTimeout(r, wait));
+    }
+  }
+  throw new Error(`RSS feed failed after ${retries} attempts`);
+}
+
 async function main() {
   const lastVideoId = process.env.LAST_VIDEO_ID || "null";
 
   console.log(`Fetching YouTube RSS feed for channel ${CHANNEL_ID}...`);
-  const res = await fetch(RSS_URL);
-  if (!res.ok) throw new Error(`RSS feed returned ${res.status}`);
+  const res = await fetchWithRetry(RSS_URL);
 
   const xml = await res.text();
   const latest = parseFeed(xml);
