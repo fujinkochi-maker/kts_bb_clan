@@ -75,7 +75,7 @@ export const Route = createFileRoute("/join")({
 });
 
 const submitApplication = createServerFn({ method: "POST" })
-  .validator((d: {
+  .inputValidator((d: {
     robloxUser: string;
     rank: string;
     message: string;
