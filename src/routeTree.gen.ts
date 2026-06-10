@@ -22,6 +22,11 @@ const KtsContentRoute = KtsContentRouteImport.update({
   path: '/kts-content',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JoinRoute = JoinRouteImport.update({
+  id: '/join',
+  path: '/join',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DiscordCommunityRoute = DiscordCommunityRouteImport.update({
   id: '/discord-community',
   path: '/discord-community',
@@ -37,66 +42,82 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JoinRoute = JoinRouteImport.update({
-  id: '/join',
-  path: '/join',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthDiscordRoute = AuthDiscordRouteImport.update({
   id: '/auth/discord',
   path: '/auth/discord',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthDiscordCallbackRoute = AuthDiscordCallbackRouteImport.update({
-  id: '/auth/discord/callback',
-  path: '/auth/discord/callback',
-  getParentRoute: () => rootRouteImport,
+  id: '/callback',
+  path: '/callback',
+  getParentRoute: () => AuthDiscordRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/auth/discord': typeof AuthDiscordRoute
-  '/auth/discord/callback': typeof AuthDiscordCallbackRoute
   '/discord-community': typeof DiscordCommunityRoute
   '/join': typeof JoinRoute
   '/kts-content': typeof KtsContentRoute
+  '/auth/discord': typeof AuthDiscordRouteWithChildren
+  '/auth/discord/callback': typeof AuthDiscordCallbackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/auth/discord': typeof AuthDiscordRoute
-  '/auth/discord/callback': typeof AuthDiscordCallbackRoute
   '/discord-community': typeof DiscordCommunityRoute
   '/join': typeof JoinRoute
   '/kts-content': typeof KtsContentRoute
+  '/auth/discord': typeof AuthDiscordRouteWithChildren
+  '/auth/discord/callback': typeof AuthDiscordCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/auth/discord': typeof AuthDiscordRoute
-  '/auth/discord/callback': typeof AuthDiscordCallbackRoute
   '/discord-community': typeof DiscordCommunityRoute
   '/join': typeof JoinRoute
   '/kts-content': typeof KtsContentRoute
+  '/auth/discord': typeof AuthDiscordRouteWithChildren
+  '/auth/discord/callback': typeof AuthDiscordCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/auth/discord' | '/auth/discord/callback' | '/discord-community' | '/join' | '/kts-content'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/discord-community'
+    | '/join'
+    | '/kts-content'
+    | '/auth/discord'
+    | '/auth/discord/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/auth/discord' | '/auth/discord/callback' | '/discord-community' | '/join' | '/kts-content'
-  id: '__root__' | '/' | '/about' | '/auth/discord' | '/auth/discord/callback' | '/discord-community' | '/join' | '/kts-content'
+  to:
+    | '/'
+    | '/about'
+    | '/discord-community'
+    | '/join'
+    | '/kts-content'
+    | '/auth/discord'
+    | '/auth/discord/callback'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/discord-community'
+    | '/join'
+    | '/kts-content'
+    | '/auth/discord'
+    | '/auth/discord/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  AuthDiscordRoute: typeof AuthDiscordRoute
-  AuthDiscordCallbackRoute: typeof AuthDiscordCallbackRoute
   DiscordCommunityRoute: typeof DiscordCommunityRoute
   JoinRoute: typeof JoinRoute
   KtsContentRoute: typeof KtsContentRoute
+  AuthDiscordRoute: typeof AuthDiscordRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -108,13 +129,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KtsContentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/discord-community': {
-      id: '/discord-community'
-      path: '/discord-community'
-      fullPath: '/discord-community'
-      preLoaderRoute: typeof DiscordCommunityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/join': {
       id: '/join'
       path: '/join'
@@ -122,11 +136,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JoinRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/discord-community': {
+      id: '/discord-community'
+      path: '/discord-community'
+      fullPath: '/discord-community'
+      preLoaderRoute: typeof DiscordCommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/discord': {
@@ -138,29 +166,33 @@ declare module '@tanstack/react-router' {
     }
     '/auth/discord/callback': {
       id: '/auth/discord/callback'
-      path: '/auth/discord/callback'
+      path: '/callback'
       fullPath: '/auth/discord/callback'
       preLoaderRoute: typeof AuthDiscordCallbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthDiscordRoute
     }
   }
 }
 
+interface AuthDiscordRouteChildren {
+  AuthDiscordCallbackRoute: typeof AuthDiscordCallbackRoute
+}
+
+const AuthDiscordRouteChildren: AuthDiscordRouteChildren = {
+  AuthDiscordCallbackRoute: AuthDiscordCallbackRoute,
+}
+
+const AuthDiscordRouteWithChildren = AuthDiscordRoute._addFileChildren(
+  AuthDiscordRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  AuthDiscordRoute: AuthDiscordRoute,
-  AuthDiscordCallbackRoute: AuthDiscordCallbackRoute,
   DiscordCommunityRoute: DiscordCommunityRoute,
   JoinRoute: JoinRoute,
   KtsContentRoute: KtsContentRoute,
+  AuthDiscordRoute: AuthDiscordRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

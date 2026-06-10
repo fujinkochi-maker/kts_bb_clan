@@ -95,6 +95,26 @@ const submitApplication = createServerFn({ method: "POST" })
       return { ok: false, error: "Webhook not configured" };
     }
 
+    const components = [
+      {
+        type: 1,
+        components: [
+          {
+            type: 2,
+            label: "Accept",
+            style: 3,
+            custom_id: "kts_app_accept",
+          },
+          {
+            type: 2,
+            label: "Deny",
+            style: 4,
+            custom_id: "kts_app_deny",
+          },
+        ],
+      },
+    ];
+
     const embed = {
       title: "📬 New Application",
       color: 0x9b59b6,
@@ -114,6 +134,8 @@ const submitApplication = createServerFn({ method: "POST" })
       timestamp: new Date().toISOString(),
     };
 
+    const payload = { embeds: [embed], components };
+
     if (data.screenshotBase64) {
       const buf = Buffer.from(data.screenshotBase64, "base64");
       const form = new FormData();
@@ -123,7 +145,7 @@ const submitApplication = createServerFn({ method: "POST" })
         blob,
         data.screenshotName || "screenshot.png",
       );
-      form.append("payload_json", JSON.stringify({ embeds: [embed] }));
+      form.append("payload_json", JSON.stringify(payload));
 
       const res = await fetch(webhookUrl2, {
         method: "POST",
@@ -138,7 +160,7 @@ const submitApplication = createServerFn({ method: "POST" })
       const res = await fetch(webhookUrl2, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ embeds: [embed] }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
