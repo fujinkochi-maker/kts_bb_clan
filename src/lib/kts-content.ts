@@ -10,6 +10,8 @@ import fxtureUrl from "@/assets/ktsFXTURE.png";
 import splurrUrl from "@/assets/ktsSplurr.webp";
 import sunUrl from "@/assets/ktsSun.png";
 import bobaUrl from "@/assets/ktsBOBA.png";
+import shaneUrl from "@/assets/ktsShane.png";
+import rutsikaUrl from "@/assets/rutsika.png";
 
 export const discordUrl = "https://discord.gg/wsf77h7Fmn";
 
@@ -84,6 +86,18 @@ export const members = [
     tagline: "Smooth and unforgettable.",
     image: bobaUrl,
   },
+  {
+    name: "KTS Shane",
+    role: "The OG",
+    tagline: "OG energy, original impact.",
+    image: shaneUrl,
+  },
+  {
+    name: "KTS Rutsika",
+    role: "The Goat",
+    tagline: "Connecting the dots",
+    image: rutsikaUrl,
+  }
 ];
 
 export const featuredMembers = members.slice(0, 3);
