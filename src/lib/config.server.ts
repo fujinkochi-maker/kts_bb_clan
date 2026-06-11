@@ -12,6 +12,10 @@ export function getServerConfig() {
       webhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
       webhookUrl2: process.env.DISCORD_WEBHOOK_URL2 ?? "",
     },
+    ticketBot: {
+      apiUrl: process.env.TICKET_BOT_API_URL ?? "",
+      apiSecret: process.env.TICKET_BOT_API_SECRET ?? "",
+    },
     sessionSecret: process.env.SESSION_SECRET ?? "kts-session-secret-change-me",
   };
 }

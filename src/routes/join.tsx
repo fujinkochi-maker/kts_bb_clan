@@ -192,6 +192,36 @@ const submitApplication = createServerFn({ method: "POST" })
       }
     }
 
+    try {
+      const { ticketBot } = await import(
+        "@/lib/config.server"
+      ).then((m) => m.getServerConfig());
+      if (ticketBot.apiUrl && ticketBot.apiSecret) {
+        const res = await fetch(`${ticketBot.apiUrl}/create-ticket`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": ticketBot.apiSecret,
+          },
+          body: JSON.stringify({
+            discordId: data.discordId,
+            discordTag: data.discordTag,
+            robloxUser: data.robloxUser,
+            rank: data.rank,
+            message: data.message,
+            referredBy: data.referredBy,
+            inGuild: data.inGuild,
+          }),
+        });
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Ticket bot error:", res.status, text);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to create ticket channel:", err);
+    }
+
     const updatedSession = {
       ...(existingSession || {}),
       lastSubmittedAt: new Date().toISOString(),
