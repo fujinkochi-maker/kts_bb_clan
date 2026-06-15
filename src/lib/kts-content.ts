@@ -81,12 +81,6 @@ export const members = [
     image: fxtureUrl,
   },
   {
-    name: "KTS BOBA",
-    role: "BOBA energy",
-    tagline: "Smooth and unforgettable.",
-    image: bobaUrl,
-  },
-  {
     name: "KTS Shane",
     role: "The OG",
     tagline: "OG energy, original impact.",

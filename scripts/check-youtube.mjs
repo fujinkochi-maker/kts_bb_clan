@@ -64,7 +64,7 @@ async function sendWebhook(video) {
 }
 
 async function main() {
-  const lastVideoId = process.env.LAST_VIDEO_ID || "null";
+  const lastVideoId = (process.env.LAST_VIDEO_ID || "null").trim();
 
   console.log(`Fetching latest video from YouTube Data API...`);
   const latest = await fetchLatestVideo();
@@ -77,7 +77,7 @@ async function main() {
   console.log(`Latest video: ${latest.title} (${latest.videoId})`);
 
   if (latest.videoId === lastVideoId) {
-    console.log("No new video — last notified video matches.");
+    console.log(`No new video — last notified video matches (${lastVideoId}).`);
     return;
   }
 
